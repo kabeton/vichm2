@@ -21,7 +21,6 @@ int main(int argc, char *argv[], char *envp[]) {
   //grid generation
   int M = (int)(L/h);
   int N = (int)(T/tau);
-  std::cout << N << std::endl;
   double *grid = new double[N*M];
   
   //u(x, 0) = sin(4pi*x/L)
@@ -61,9 +60,14 @@ int main(int argc, char *argv[], char *envp[]) {
   std::ofstream ofi(oname);
   
   for(int i = 0; i < M; i++) {
+    double time = 0, time_next = 0;
     ofi << i*h << " ";
-    for(int j = 0; j < N; j += (int)T/36/tau + 1) {
-      ofi << grid[j*M + i] << " ";
+    for(int j = 0; j < N; j ++) {
+      if(time >= time_next) {
+        ofi << grid[j*M + i] << " ";
+        time_next += 0.5;
+      }
+      time += tau;
     }
     ofi << std::endl;
   }
