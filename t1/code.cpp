@@ -42,11 +42,22 @@ int main(int argc, char *argv[], char *envp[]) {
   
   //lax-wendroff scheme
   if(!strcmp(scheme, "lv")) {
+    for(int n = 0; n < N - 1; n++) {
+      for(int m = 1; m < M - 1; m++) {
+        grid[(n + 1)*M + m] = CFL*CFL/2*(grid[n*M + (m + 1)] - 2*grid[n*M + m] + grid[n*M + (m - 1)])
+                              + CFL/2*(grid[n*M + (m + 1)] - grid[n*M + (m - 1)]) + grid[n*M + m];
+      }
+      //periodic boundary conditions
+      grid[(n + 1)*M + (M - 1)] = CFL*CFL/2*(grid[n*M] - 2*grid[n*M + (M - 1)] + grid[n*M + (M - 2)])
+                                + CFL/2*(grid[n*M] - grid[n*M + (M - 2)]) + grid[n*M + (M - 1)];
+      grid[(n + 1)*M] = CFL*CFL/2*(grid[n*M + 1] - 2*grid[n*M] + grid[n*M + (M - 1)])
+                                + CFL/2*(grid[n*M + 1] - grid[n*M + (M - 1)]) + grid[n*M];
+    }
   }
 
   //writing answer to file
   char *oname;
-  asprintf(&oname, "%s_%.1f_%.1f_%.1f.dat", scheme, L, T, CFL);
+  asprintf(&oname, "%s_%.1f_%.1f_%.2f.dat", scheme, L, T, CFL);
   std::ofstream ofi(oname);
   
   for(int i = 0; i < M; i++) {
